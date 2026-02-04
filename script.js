@@ -236,157 +236,6 @@ class ScrollEffects {
     }
 }
 
-// CARRUSEL DE SHORTS - CORREGIDO Y FUNCIONAL (AHORA CON 2 ELEMENTOS)
-class ShortsCarousel {
-    constructor() {
-        this.track = document.querySelector('.shorts-carousel-track');
-        this.items = document.querySelectorAll('.short-item');
-        this.prevBtn = document.querySelector('.shorts .carousel-btn.prev');
-        this.nextBtn = document.querySelector('.shorts .carousel-btn.next');
-        this.indicators = document.querySelectorAll('.shorts-indicators .indicator');
-        
-        this.currentPosition = 0;
-        this.itemsPerView = this.calculateItemsPerView();
-        this.totalItems = this.items.length; // AHORA 2 ELEMENTOS
-        this.maxPosition = this.totalItems - this.itemsPerView;
-        this.gap = 20;
-        
-        this.init();
-    }
-    
-    calculateItemsPerView() {
-        const width = window.innerWidth;
-        if (width >= 1024) return 4;
-        if (width >= 768) return 2;
-        return 1;
-    }
-    
-    init() {
-        this.updateItemsPerView();
-        
-        if (this.prevBtn) {
-            this.prevBtn.addEventListener('click', () => this.move(-1));
-        }
-        
-        if (this.nextBtn) {
-            this.nextBtn.addEventListener('click', () => this.move(1));
-        }
-        
-        if (this.indicators) {
-            this.indicators.forEach((indicator, index) => {
-                indicator.addEventListener('click', () => this.goToPosition(index));
-            });
-        }
-        
-        window.addEventListener('resize', () => {
-            this.updateItemsPerView();
-            this.updateCarousel();
-        });
-        
-        this.updateCarousel();
-        this.addTouchSupport();
-    }
-    
-    updateItemsPerView() {
-        this.itemsPerView = this.calculateItemsPerView();
-        // CORRECCIÓN PARA SOLO 2 SHORTS: asegurar que maxPosition sea 0 o 1
-        this.maxPosition = Math.max(0, this.totalItems - this.itemsPerView);
-        
-        // Si hay 2 o menos elementos y se muestran 4, no hay desplazamiento
-        if (this.totalItems <= this.itemsPerView) {
-            this.maxPosition = 0;
-        }
-        
-        if (this.currentPosition > this.maxPosition) {
-            this.currentPosition = this.maxPosition;
-        }
-    }
-    
-    updateCarousel() {
-        if (this.items.length === 0 || !this.track) return;
-        
-        const itemWidth = this.items[0].offsetWidth;
-        const translateX = -(this.currentPosition * (itemWidth + this.gap));
-        
-        this.track.style.transform = `translateX(${translateX}px)`;
-        this.updateIndicators();
-        this.updateButtons();
-    }
-    
-    updateIndicators() {
-        if (!this.indicators) return;
-        
-        this.indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === this.currentPosition);
-        });
-    }
-    
-    updateButtons() {
-        if (this.prevBtn) {
-            this.prevBtn.disabled = this.currentPosition === 0;
-            this.prevBtn.style.opacity = this.currentPosition === 0 ? '0.3' : '1';
-            this.prevBtn.style.cursor = this.currentPosition === 0 ? 'not-allowed' : 'pointer';
-        }
-        
-        if (this.nextBtn) {
-            this.nextBtn.disabled = this.currentPosition >= this.maxPosition;
-            this.nextBtn.style.opacity = this.currentPosition >= this.maxPosition ? '0.3' : '1';
-            this.nextBtn.style.cursor = this.currentPosition >= this.maxPosition ? 'not-allowed' : 'pointer';
-        }
-    }
-    
-    move(direction) {
-        const newPosition = this.currentPosition + direction;
-        
-        if (newPosition >= 0 && newPosition <= this.maxPosition) {
-            this.currentPosition = newPosition;
-            this.updateCarousel();
-        }
-    }
-    
-    goToPosition(position) {
-        if (position >= 0 && position <= this.maxPosition) {
-            this.currentPosition = position;
-            this.updateCarousel();
-        }
-    }
-    
-    addTouchSupport() {
-        if (!this.track) return;
-        
-        let startX = 0;
-        let currentX = 0;
-        let isDragging = false;
-        
-        this.track.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            currentX = startX;
-            isDragging = true;
-        });
-        
-        this.track.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            currentX = e.touches[0].clientX;
-        });
-        
-        this.track.addEventListener('touchend', () => {
-            if (!isDragging) return;
-            isDragging = false;
-            
-            const diff = startX - currentX;
-            const threshold = 50;
-            
-            if (Math.abs(diff) > threshold) {
-                if (diff > 0) {
-                    this.move(1);
-                } else {
-                    this.move(-1);
-                }
-            }
-        });
-    }
-}
-
 // CARRUSEL DE CANALES - CORREGIDO PARA SOLO 1 ELEMENTO
 class ChannelsCarousel {
     constructor() {
@@ -636,7 +485,7 @@ class HoverEffects {
     
     initVideoHovers() {
         // Solo aplicar hover a elementos específicos, no a todos los videos
-        const videoContainers = document.querySelectorAll('.video-container, .portfolio-item, .short-item-content, .feature-card, .channel-item');
+        const videoContainers = document.querySelectorAll('.video-container, .portfolio-item, .feature-card, .channel-item');
         
         videoContainers.forEach(container => {
             container.addEventListener('mouseenter', (e) => {
@@ -655,7 +504,7 @@ class HoverEffects {
     
     initCardHovers() {
         // Efecto sutil sin sobrecargar
-        const cards = document.querySelectorAll('.feature-card, .portfolio-item, .short-item-content, .channel-item');
+        const cards = document.querySelectorAll('.feature-card, .portfolio-item, .channel-item');
         
         cards.forEach(card => {
             card.addEventListener('mouseenter', () => {
@@ -677,8 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollEffects = new ScrollEffects();
     const hoverEffects = new HoverEffects();
     
-    // Inicializar carruseles
-    const shortsCarousel = new ShortsCarousel();
+    // Inicializar carruseles (SOLO CANALES Y RESEÑAS)
     const channelsCarousel = new ChannelsCarousel();
     const reviewsCarousel = new ReviewsCarousel();
     
@@ -827,9 +675,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Forzar actualización de carruseles después de carga
     setTimeout(() => {
-        if (shortsCarousel && shortsCarousel.updateCarousel) {
-            shortsCarousel.updateCarousel();
-        }
         if (channelsCarousel && channelsCarousel.updateCarousel) {
             channelsCarousel.updateCarousel();
         }
