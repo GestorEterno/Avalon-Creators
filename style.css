@@ -781,33 +781,7 @@ body {
     z-index: 1;
 }
 
-.online-dot {
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
-    width: 14px;
-    height: 14px;
-    background: #666;
-    border-radius: 50%;
-    border: 3px solid var(--card-bg);
-    transition: all 0.5s var(--ease-smooth);
-    z-index: 4;
-}
-
-.online-dot.active {
-    background: #ff00ff;
-    box-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        box-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
-    }
-    50% {
-        box-shadow: 0 0 20px rgba(255, 0, 255, 0.9);
-    }
-}
+/* PUNTO ONLINE ELIMINADO - NO TENÍA SENTIDO */
 
 .channel-info {
     text-align: center;
