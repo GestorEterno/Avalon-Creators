@@ -13,10 +13,13 @@
     --accent-tertiary: #9c27b0;
     --accent-blue: #00a2ff;
     --accent-twitter: #1DA1F2;
+    --whatsapp-green: #25D366;
+    --whatsapp-dark-green: #128C7E;
     --accent-gradient: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-secondary) 100%);
     --accent-gradient-full: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-secondary) 50%, var(--accent-tertiary) 100%);
     --gradient-blue: linear-gradient(90deg, var(--accent-blue) 0%, #00d4ff 100%);
     --gradient-twitter: linear-gradient(90deg, var(--accent-twitter) 0%, #00aced 100%);
+    --gradient-whatsapp: linear-gradient(90deg, var(--whatsapp-green) 0%, var(--whatsapp-dark-green) 100%);
     --text-color: #f0f0f0;
     --text-muted: #a0a0b0;
     --card-bg: rgba(42, 14, 53, 0.7);
@@ -366,6 +369,16 @@ body {
 .portfolio-btn:hover {
     background: var(--gradient-blue);
     box-shadow: 0 8px 25px rgba(0, 162, 255, 0.5);
+}
+
+.whatsapp-btn {
+    background: var(--gradient-whatsapp);
+    box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp-btn:hover {
+    background: var(--gradient-whatsapp);
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
 }
 
 .twitter-btn {
@@ -1255,6 +1268,7 @@ body {
     font-size: 0.85rem;
     text-decoration: none;
     transition: all 0.5s var(--ease-smooth);
+    cursor: pointer;
 }
 
 .social-circle:hover {
