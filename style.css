@@ -538,6 +538,149 @@ body {
     box-shadow: 0 15px 30px rgba(255, 0, 255, 0.25);
 }
 
+/* SHORTS - ANIMACIÓN OPTIMIZADA (SIN LAG) */
+.shorts {
+    padding: 70px 0 50px;
+    position: relative;
+}
+
+.shorts::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 70% 30%, rgba(255, 0, 255, 0.05) 0%, transparent 50%);
+    z-index: -1;
+}
+
+.shorts-carousel-container {
+    position: relative;
+    max-width: 1200px;
+    margin: 30px auto 15px;
+    padding: 0 60px;
+    overflow: hidden;
+}
+
+.shorts-carousel-track {
+    display: flex;
+    gap: 20px;
+    transition: transform 0.6s var(--ease-smooth);
+    padding: 15px 0;
+}
+
+.short-item {
+    background: transparent;
+    border-radius: 12px;
+    overflow: visible;
+    position: relative;
+    aspect-ratio: 9/16;
+    flex: 0 0 calc(25% - 15px);
+    max-width: calc(25% - 15px);
+    height: auto;
+    max-height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.short-item-content {
+    width: 100%;
+    height: 100%;
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.4s var(--ease-smooth), box-shadow 0.4s var(--ease-smooth);
+    position: relative;
+}
+
+/* ANIMACIÓN EXACTA Y OPTIMIZADA - SIN LAG */
+.short-item:hover .short-item-content {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(255, 0, 255, 0.25);
+    border-color: rgba(255, 0, 255, 0.4);
+}
+
+/* CORRECIÓN CRÍTICA: LOS SHORTS NO DEBEN TENER TÍTULO */
+.short-item .short-badge {
+    display: none !important;
+}
+
+.short-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--accent-gradient);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    z-index: 10;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.short-item .short-video {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+}
+
+.short-item iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.short-item .placeholder {
+    background: linear-gradient(135deg, rgba(42, 14, 53, 0.8), rgba(26, 10, 31, 0.9));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.short-placeholder {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.short-placeholder i {
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    margin-bottom: 12px;
+    opacity: 0.7;
+}
+
+.short-placeholder span {
+    display: block;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+.short-placeholder p {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
 /* CANALES */
 .channels {
     padding: 70px 0;
@@ -571,7 +714,6 @@ body {
     gap: 20px;
     transition: transform 0.6s var(--ease-smooth);
     padding: 15px 0;
-    justify-content: center; /* Centrar el único canal */
 }
 
 .channel-item {
@@ -589,7 +731,6 @@ body {
     overflow: hidden;
     flex: 0 0 calc(20% - 16px);
     max-width: calc(20% - 16px);
-    min-width: 200px; /* Ancho mínimo para que se vea bien */
 }
 
 .channel-item:hover {
@@ -760,6 +901,7 @@ body {
 }
 
 /* BOTONES DE CARRUSEL - FUNCIONALES */
+.shorts-carousel-container .carousel-btn,
 .channels-carousel-container .carousel-btn {
     position: absolute;
     top: 50%;
@@ -780,6 +922,7 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
+.shorts-carousel-container .carousel-btn:hover:not(:disabled),
 .channels-carousel-container .carousel-btn:hover:not(:disabled) {
     background: var(--accent-gradient);
     transform: translateY(-50%) scale(1.1);
@@ -787,16 +930,19 @@ body {
     box-shadow: 0 8px 25px rgba(255, 0, 255, 0.4);
 }
 
+.shorts-carousel-container .carousel-btn:disabled,
 .channels-carousel-container .carousel-btn:disabled {
     opacity: 0.3;
     cursor: not-allowed;
     pointer-events: none;
 }
 
+.shorts-carousel-container .carousel-btn.prev,
 .channels-carousel-container .carousel-btn.prev {
     left: 0;
 }
 
+.shorts-carousel-container .carousel-btn.next,
 .channels-carousel-container .carousel-btn.next {
     right: 0;
 }
@@ -808,6 +954,23 @@ body {
     margin-top: 10px;
     position: relative;
     z-index: 5;
+}
+
+.shorts-indicators {
+    margin-top: 5px;
+    padding-top: 15px;
+    position: relative;
+}
+
+.shorts-indicators::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
 }
 
 .indicator {
@@ -1199,15 +1362,21 @@ body {
         padding: 0 30px;
     }
     
-    /* CANALES - Tablet: centrar el único canal */
-    .channel-item {
-        flex: 0 0 100%;
-        max-width: 300px;
-        margin: 0 auto;
+    /* SHORTS - Tablet: 2 elementos visibles */
+    .shorts-carousel-container,
+    .channels-carousel-container {
+        padding: 0 50px;
     }
     
-    .channels-carousel-track {
-        justify-content: center;
+    .short-item {
+        flex: 0 0 calc(50% - 10px);
+        max-width: calc(50% - 10px);
+    }
+    
+    /* CANALES - Tablet: 2 elementos visibles */
+    .channel-item {
+        flex: 0 0 calc(50% - 10px);
+        max-width: calc(50% - 10px);
     }
 }
 
@@ -1346,10 +1515,28 @@ body {
         height: 220px;
     }
     
-    /* CANALES - Móvil: centrar el único canal */
+    /* SHORTS - Móvil: 1 elemento visible */
+    .shorts-carousel-container,
+    .channels-carousel-container {
+        padding: 0 40px;
+    }
+    
+    .shorts-carousel-container .carousel-btn,
+    .channels-carousel-container .carousel-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+    
+    .short-item {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    /* CANALES - Móvil: 1 elemento visible */
     .channel-item {
         flex: 0 0 100%;
-        max-width: 280px;
+        max-width: 100%;
         padding: 20px 15px;
     }
     
@@ -1448,10 +1635,21 @@ body {
         margin: 0 8px;
     }
     
+    .shorts-carousel-container,
+    .channels-carousel-container {
+        padding: 0 30px;
+    }
+    
+    .shorts-carousel-container .carousel-btn,
+    .channels-carousel-container .carousel-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+    
     .channel-item {
         min-width: 160px;
         padding: 18px 12px;
-        max-width: 250px;
     }
     
     .avatar-circle {
