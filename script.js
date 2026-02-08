@@ -1,9 +1,3 @@
-// Función para mostrar mensaje de redes sociales
-function mostrarMensajeRedes() {
-    alert("¡Próximamente agregaré mis redes sociales!");
-    return false;
-}
-
 // Animación del fondo tecnológico (OPTIMIZADA)
 class TechBackground {
     constructor() {
@@ -236,7 +230,158 @@ class ScrollEffects {
     }
 }
 
-// CARRUSEL DE CANALES - CORREGIDO PARA SOLO 1 ELEMENTO
+// CARRUSEL DE SHORTS - CORREGIDO Y FUNCIONAL (AHORA CON 4 ELEMENTOS)
+class ShortsCarousel {
+    constructor() {
+        this.track = document.querySelector('.shorts-carousel-track');
+        this.items = document.querySelectorAll('.short-item');
+        this.prevBtn = document.querySelector('.shorts .carousel-btn.prev');
+        this.nextBtn = document.querySelector('.shorts .carousel-btn.next');
+        this.indicators = document.querySelectorAll('.shorts-indicators .indicator');
+        
+        this.currentPosition = 0;
+        this.itemsPerView = this.calculateItemsPerView();
+        this.totalItems = this.items.length; // AHORA 4 ELEMENTOS
+        this.maxPosition = this.totalItems - this.itemsPerView;
+        this.gap = 20;
+        
+        this.init();
+    }
+    
+    calculateItemsPerView() {
+        const width = window.innerWidth;
+        if (width >= 1024) return 4;
+        if (width >= 768) return 2;
+        return 1;
+    }
+    
+    init() {
+        this.updateItemsPerView();
+        
+        if (this.prevBtn) {
+            this.prevBtn.addEventListener('click', () => this.move(-1));
+        }
+        
+        if (this.nextBtn) {
+            this.nextBtn.addEventListener('click', () => this.move(1));
+        }
+        
+        if (this.indicators) {
+            this.indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => this.goToPosition(index));
+            });
+        }
+        
+        window.addEventListener('resize', () => {
+            this.updateItemsPerView();
+            this.updateCarousel();
+        });
+        
+        this.updateCarousel();
+        this.addTouchSupport();
+    }
+    
+    updateItemsPerView() {
+        this.itemsPerView = this.calculateItemsPerView();
+        // CORRECCIÓN PARA 4 SHORTS: asegurar que maxPosition sea 0, 1 o 2
+        this.maxPosition = Math.max(0, this.totalItems - this.itemsPerView);
+        
+        // Si hay 4 o menos elementos y se muestran 4, no hay desplazamiento
+        if (this.totalItems <= this.itemsPerView) {
+            this.maxPosition = 0;
+        }
+        
+        if (this.currentPosition > this.maxPosition) {
+            this.currentPosition = this.maxPosition;
+        }
+    }
+    
+    updateCarousel() {
+        if (this.items.length === 0 || !this.track) return;
+        
+        const itemWidth = this.items[0].offsetWidth;
+        const translateX = -(this.currentPosition * (itemWidth + this.gap));
+        
+        this.track.style.transform = `translateX(${translateX}px)`;
+        this.updateIndicators();
+        this.updateButtons();
+    }
+    
+    updateIndicators() {
+        if (!this.indicators) return;
+        
+        this.indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === this.currentPosition);
+        });
+    }
+    
+    updateButtons() {
+        if (this.prevBtn) {
+            this.prevBtn.disabled = this.currentPosition === 0;
+            this.prevBtn.style.opacity = this.currentPosition === 0 ? '0.3' : '1';
+            this.prevBtn.style.cursor = this.currentPosition === 0 ? 'not-allowed' : 'pointer';
+        }
+        
+        if (this.nextBtn) {
+            this.nextBtn.disabled = this.currentPosition >= this.maxPosition;
+            this.nextBtn.style.opacity = this.currentPosition >= this.maxPosition ? '0.3' : '1';
+            this.nextBtn.style.cursor = this.currentPosition >= this.maxPosition ? 'not-allowed' : 'pointer';
+        }
+    }
+    
+    move(direction) {
+        const newPosition = this.currentPosition + direction;
+        
+        if (newPosition >= 0 && newPosition <= this.maxPosition) {
+            this.currentPosition = newPosition;
+            this.updateCarousel();
+        }
+    }
+    
+    goToPosition(position) {
+        if (position >= 0 && position <= this.maxPosition) {
+            this.currentPosition = position;
+            this.updateCarousel();
+        }
+    }
+    
+    addTouchSupport() {
+        if (!this.track) return;
+        
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+        
+        this.track.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            currentX = startX;
+            isDragging = true;
+        });
+        
+        this.track.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            currentX = e.touches[0].clientX;
+        });
+        
+        this.track.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            const diff = startX - currentX;
+            const threshold = 50;
+            
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0) {
+                    this.move(1);
+                } else {
+                    this.move(-1);
+                }
+            }
+        });
+    }
+}
+
+// CARRUSEL DE CANALES - CORREGIDO Y FUNCIONAL (AHORA CON 2 ELEMENTOS)
 class ChannelsCarousel {
     constructor() {
         this.track = document.querySelector('.channels-carousel-track');
@@ -247,8 +392,8 @@ class ChannelsCarousel {
         
         this.currentPosition = 0;
         this.itemsPerView = this.calculateItemsPerView();
-        this.totalItems = this.items.length; // AHORA 1 ELEMENTO
-        this.maxPosition = 0; // Forzamos a 0 porque solo hay 1
+        this.totalItems = this.items.length; // AHORA 2 ELEMENTOS
+        this.maxPosition = this.totalItems - this.itemsPerView;
         this.gap = 20;
         
         this.init();
@@ -256,19 +401,26 @@ class ChannelsCarousel {
     
     calculateItemsPerView() {
         const width = window.innerWidth;
-        if (width >= 1024) return 1;
-        if (width >= 768) return 1;
+        if (width >= 1024) return 5;
+        if (width >= 768) return 2;
         return 1;
     }
     
     init() {
         this.updateItemsPerView();
         
-        // Ocultar botones de navegación ya que solo hay 1 canal
-        if (this.prevBtn) this.prevBtn.style.display = 'none';
-        if (this.nextBtn) this.nextBtn.style.display = 'none';
-        if (this.indicators && this.indicators.length > 0) {
-            this.indicators[0].parentElement.style.display = 'none';
+        if (this.prevBtn) {
+            this.prevBtn.addEventListener('click', () => this.move(-1));
+        }
+        
+        if (this.nextBtn) {
+            this.nextBtn.addEventListener('click', () => this.move(1));
+        }
+        
+        if (this.indicators) {
+            this.indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => this.goToPosition(index));
+            });
         }
         
         window.addEventListener('resize', () => {
@@ -277,30 +429,109 @@ class ChannelsCarousel {
         });
         
         this.updateCarousel();
+        this.addTouchSupport();
     }
     
     updateItemsPerView() {
-        this.itemsPerView = 1;
-        this.maxPosition = 0;
-        this.currentPosition = 0;
+        this.itemsPerView = this.calculateItemsPerView();
+        this.maxPosition = Math.max(0, this.totalItems - this.itemsPerView);
+        
+        // Si hay 2 o menos elementos y se muestran 5, no hay desplazamiento
+        if (this.totalItems <= this.itemsPerView) {
+            this.maxPosition = 0;
+        }
+        
+        if (this.currentPosition > this.maxPosition) {
+            this.currentPosition = this.maxPosition;
+        }
     }
     
     updateCarousel() {
         if (this.items.length === 0 || !this.track) return;
         
-        // Centrar el único canal
-        this.track.style.transform = `translateX(0px)`;
-        this.track.style.justifyContent = 'center';
+        const itemWidth = this.items[0].offsetWidth;
+        const translateX = -(this.currentPosition * (itemWidth + this.gap));
         
-        if (this.indicators) {
-            this.indicators.forEach((indicator, index) => {
-                indicator.classList.toggle('active', index === this.currentPosition);
-            });
+        this.track.style.transform = `translateX(${translateX}px)`;
+        this.updateIndicators();
+        this.updateButtons();
+    }
+    
+    updateIndicators() {
+        if (!this.indicators) return;
+        
+        this.indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === this.currentPosition);
+        });
+    }
+    
+    updateButtons() {
+        if (this.prevBtn) {
+            this.prevBtn.disabled = this.currentPosition === 0;
+            this.prevBtn.style.opacity = this.currentPosition === 0 ? '0.3' : '1';
+            this.prevBtn.style.cursor = this.currentPosition === 0 ? 'not-allowed' : 'pointer';
         }
+        
+        if (this.nextBtn) {
+            this.nextBtn.disabled = this.currentPosition >= this.maxPosition;
+            this.nextBtn.style.opacity = this.currentPosition >= this.maxPosition ? '0.3' : '1';
+            this.nextBtn.style.cursor = this.currentPosition >= this.maxPosition ? 'not-allowed' : 'pointer';
+        }
+    }
+    
+    move(direction) {
+        const newPosition = this.currentPosition + direction;
+        
+        if (newPosition >= 0 && newPosition <= this.maxPosition) {
+            this.currentPosition = newPosition;
+            this.updateCarousel();
+        }
+    }
+    
+    goToPosition(position) {
+        if (position >= 0 && position <= this.maxPosition) {
+            this.currentPosition = position;
+            this.updateCarousel();
+        }
+    }
+    
+    addTouchSupport() {
+        if (!this.track) return;
+        
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+        
+        this.track.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            currentX = startX;
+            isDragging = true;
+        });
+        
+        this.track.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            currentX = e.touches[0].clientX;
+        });
+        
+        this.track.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            const diff = startX - currentX;
+            const threshold = 50;
+            
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0) {
+                    this.move(1);
+                } else {
+                    this.move(-1);
+                }
+            }
+        });
     }
 }
 
-// Carrusel de Reseñas - MODIFICADO PARA SOLO 1 RESEÑA
+// Carrusel de Reseñas
 class ReviewsCarousel {
     constructor() {
         this.cards = document.querySelectorAll('.review-card');
@@ -316,68 +547,37 @@ class ReviewsCarousel {
     }
     
     init() {
-        // Si solo hay 1 reseña, ocultar controles
-        if (this.totalCards <= 1) {
-            if (this.prevBtn) this.prevBtn.style.display = 'none';
-            if (this.nextBtn) this.nextBtn.style.display = 'none';
-            if (this.dots && this.dots.length > 0) {
-                const dotsContainer = this.dots[0].parentElement;
-                if (dotsContainer) dotsContainer.style.display = 'none';
-            }
-        } else {
-            if (this.prevBtn) {
-                this.prevBtn.addEventListener('click', () => this.prev());
-            }
-            
-            if (this.nextBtn) {
-                this.nextBtn.addEventListener('click', () => this.next());
-            }
-            
-            if (this.dots) {
-                this.dots.forEach(dot => {
-                    dot.addEventListener('click', (e) => {
-                        const index = parseInt(e.target.getAttribute('data-index'));
-                        if (index !== this.currentIndex && !this.isTransitioning) {
-                            this.goToSlide(index);
-                        }
-                    });
+        if (this.prevBtn) {
+            this.prevBtn.addEventListener('click', () => this.prev());
+        }
+        
+        if (this.nextBtn) {
+            this.nextBtn.addEventListener('click', () => this.next());
+        }
+        
+        if (this.dots) {
+            this.dots.forEach(dot => {
+                dot.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.getAttribute('data-index'));
+                    if (index !== this.currentIndex && !this.isTransitioning) {
+                        this.goToSlide(index);
+                    }
                 });
-            }
-            
-            this.startAutoPlay();
-            
-            const carouselTrack = document.querySelector('.reviews-carousel-track');
-            if (carouselTrack) {
-                carouselTrack.addEventListener('mouseenter', () => this.stopAutoPlay());
-                carouselTrack.addEventListener('mouseleave', () => this.startAutoPlay());
-            }
+            });
+        }
+        
+        this.startAutoPlay();
+        
+        const carouselTrack = document.querySelector('.reviews-carousel-track');
+        if (carouselTrack) {
+            carouselTrack.addEventListener('mouseenter', () => this.stopAutoPlay());
+            carouselTrack.addEventListener('mouseleave', () => this.startAutoPlay());
         }
         
         this.updateControls();
     }
     
     updateControls() {
-        if (this.totalCards <= 1) {
-            // Solo una reseña - mostrar siempre activa
-            this.cards.forEach((card, index) => {
-                const isActive = index === this.currentIndex;
-                card.classList.toggle('active', isActive);
-                
-                if (isActive) {
-                    card.style.zIndex = '2';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateX(0) scale(1)';
-                    card.style.visibility = 'visible';
-                } else {
-                    card.style.zIndex = '1';
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateX(50px) scale(0.95)';
-                    card.style.visibility = 'hidden';
-                }
-            });
-            return;
-        }
-        
         if (this.prevBtn) {
             this.prevBtn.style.opacity = '1';
             this.prevBtn.style.cursor = 'pointer';
@@ -413,7 +613,7 @@ class ReviewsCarousel {
     }
     
     prev() {
-        if (!this.isTransitioning && this.totalCards > 1) {
+        if (!this.isTransitioning) {
             this.isTransitioning = true;
             
             if (this.currentIndex === 0) {
@@ -431,7 +631,7 @@ class ReviewsCarousel {
     }
     
     next() {
-        if (!this.isTransitioning && this.totalCards > 1) {
+        if (!this.isTransitioning) {
             this.isTransitioning = true;
             
             if (this.currentIndex === this.totalCards - 1) {
@@ -449,7 +649,7 @@ class ReviewsCarousel {
     }
     
     goToSlide(index) {
-        if (index >= 0 && index < this.totalCards && !this.isTransitioning && this.totalCards > 1) {
+        if (index >= 0 && index < this.totalCards && !this.isTransitioning) {
             this.isTransitioning = true;
             this.currentIndex = index;
             this.updateControls();
@@ -461,7 +661,6 @@ class ReviewsCarousel {
     }
     
     startAutoPlay() {
-        if (this.totalCards <= 1) return;
         this.stopAutoPlay();
         this.autoPlayInterval = setInterval(() => {
             this.next();
@@ -485,7 +684,7 @@ class HoverEffects {
     
     initVideoHovers() {
         // Solo aplicar hover a elementos específicos, no a todos los videos
-        const videoContainers = document.querySelectorAll('.video-container, .portfolio-item, .feature-card, .channel-item');
+        const videoContainers = document.querySelectorAll('.video-container, .portfolio-item, .short-item-content, .feature-card, .channel-item');
         
         videoContainers.forEach(container => {
             container.addEventListener('mouseenter', (e) => {
@@ -504,7 +703,7 @@ class HoverEffects {
     
     initCardHovers() {
         // Efecto sutil sin sobrecargar
-        const cards = document.querySelectorAll('.feature-card, .portfolio-item, .channel-item');
+        const cards = document.querySelectorAll('.feature-card, .portfolio-item, .short-item-content, .channel-item');
         
         cards.forEach(card => {
             card.addEventListener('mouseenter', () => {
@@ -526,7 +725,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollEffects = new ScrollEffects();
     const hoverEffects = new HoverEffects();
     
-    // Inicializar carruseles (SOLO CANALES Y RESEÑAS)
+    // Inicializar carruseles
+    const shortsCarousel = new ShortsCarousel();
     const channelsCarousel = new ChannelsCarousel();
     const reviewsCarousel = new ReviewsCarousel();
     
@@ -643,6 +843,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
+    // Actualizar enlaces de reseñas
+    const reviewLinks = [
+        'https://www.youtube.com/@YoSoySimonSprunki',
+        'https://www.youtube.com/@Randyelpanda'
+    ];
+    
+    document.querySelectorAll('.review-channel-link').forEach((link, index) => {
+        if (index < reviewLinks.length && reviewLinks[index] !== '#') {
+            link.setAttribute('href', reviewLinks[index]);
+        }
+    });
+    
+    // Puntos online dinámicos
+    const onlineDots = document.querySelectorAll('.online-dot');
+    
+    if (onlineDots.length > 0) {
+        setInterval(() => {
+            onlineDots.forEach(dot => {
+                dot.classList.remove('active');
+                dot.style.background = '#666';
+            });
+            
+            const randomIndex = Math.floor(Math.random() * onlineDots.length);
+            onlineDots[randomIndex].classList.add('active');
+            onlineDots[randomIndex].style.background = '#ff00ff';
+        }, 5000);
+    }
+    
     // Fallback para imágenes de canales
     const channelImages = document.querySelectorAll('.channel-image');
     channelImages.forEach(img => {
@@ -675,6 +903,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Forzar actualización de carruseles después de carga
     setTimeout(() => {
+        if (shortsCarousel && shortsCarousel.updateCarousel) {
+            shortsCarousel.updateCarousel();
+        }
         if (channelsCarousel && channelsCarousel.updateCarousel) {
             channelsCarousel.updateCarousel();
         }
