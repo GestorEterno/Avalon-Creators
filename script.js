@@ -855,22 +855,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Puntos online dinámicos
-    const onlineDots = document.querySelectorAll('.online-dot');
-    
-    if (onlineDots.length > 0) {
-        setInterval(() => {
-            onlineDots.forEach(dot => {
-                dot.classList.remove('active');
-                dot.style.background = '#666';
-            });
-            
-            const randomIndex = Math.floor(Math.random() * onlineDots.length);
-            onlineDots[randomIndex].classList.add('active');
-            onlineDots[randomIndex].style.background = '#ff00ff';
-        }, 5000);
-    }
-    
     // Fallback para imágenes de canales
     const channelImages = document.querySelectorAll('.channel-image');
     channelImages.forEach(img => {
